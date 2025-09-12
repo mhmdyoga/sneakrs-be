@@ -139,6 +139,8 @@ export const createTx = async (
       },
     });
 
+    const DollarToIDR = 16373.90;
+
     // orderParams;
     const OrderParams = {
       transaction_details: {
@@ -154,7 +156,7 @@ export const createTx = async (
           productId: items.productId,
           size: items.size,
           quantity: items.quantity,
-          price: items.price,
+          price: items.price * DollarToIDR,
           name: `${items.productId} - Size ${items.size}`,
         })),
       },
