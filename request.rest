@@ -1,0 +1,70 @@
+GET http://localhost:6542/api/v1/users
+Authorization: Bearer Y2FoYXlxQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2NzM5MTc2LCJleHAiOjE3NTY3NDI3NzZ9.CgCsnCnnW0pagPhP7qCSV3RdZo26JkYKG1CyelAYMmc
+###
+GET http://localhost:6542/api/v1/user/1
+Authorization: Bearer Y2FoYXlxQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2NzM5MTc2LCJleHAiOjE3NTY3NDI3NzZ9.CgCsnCnnW0pagPhP7qCSV3RdZo26JkYKG1CyelAYMmc
+
+###
+POST http://localhost:6542/api/v1/auth/register
+Content-Type: application/json
+
+{
+    "name": "Muhamad Yoga",
+    "email": "yogacahayq@gmail.com",
+    "password": "yogacahaya123",
+    "confirmPassword": "yogacahaya123"
+}
+
+###
+PATCH  http://localhost:6542/api/v1/user/1
+Content-Type: application/json
+
+{
+    "password": "yoga123"
+}
+
+###
+POST http://localhost:6542/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "yogacahayq@gmail.com",
+    "password": "yoga123"
+}
+
+###
+GET http://localhost:6542/api/v1/products
+
+###
+GET http://localhost:6542/api/v1/categories
+
+###
+POST http://localhost:6542/api/v1/category
+Content-Type: application/json
+
+{
+    "categoryName": "Footwear"
+}
+
+###
+PUT http://localhost:6542/api/v1/category/1
+Content-Type: application/json
+
+{
+    "category": "Fashion"
+}
+
+###
+PUT http://localhost:6542/api/v1/product/cmf44j1h600009qt8l3zars9x
+Content-Type: application/json
+
+{
+    "price": 182
+} 
+
+###
+GET http://localhost:6542/api/v1/product/Jordan%201%20Low%20OG
+
+###
+GET http://localhost:6542/api/v1/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ik11aGFtYWQgWW9nYSIsImVtYWlsIjoieW9nYWNhaGF5cUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1NzU5MjQ1MiwiZXhwIjoxNzU3NTk2MDUyfQ.aYrJn3TpuU5fLsqRWzBnModhPA1n2vB7gysl0cgBimg
