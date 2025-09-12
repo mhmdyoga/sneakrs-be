@@ -90,7 +90,7 @@ export const LoginUser = async(req: express.Request, res: express.Response): Pro
     }
 }
 
-export const logoutUser = async(req:express.Request, res:express.Response): Promise<void> => {
+export const logoutUser = async(_req:express.Request, res:express.Response): Promise<void> => {
     try {
         // delete cookies
         res.clearCookie("token", {

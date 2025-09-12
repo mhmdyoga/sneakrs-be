@@ -3,7 +3,7 @@ import express from "express";
 import { snap } from "../config/midtrans.js";
 
 export const getTx = async (
-  req: express.Request,
+  _req: express.Request,
   res: express.Response
 ): Promise<void> => {
   try {

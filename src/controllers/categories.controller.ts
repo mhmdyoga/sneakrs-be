@@ -1,7 +1,7 @@
 import express from "express";
 import prisma from "../config/database.js";
 
-export const getCategories = async (req: express.Request, res:express.Response): Promise<void> =>{
+export const getCategories = async (_req: express.Request, res:express.Response): Promise<void> =>{
    try {
      const category = await prisma.category.findMany();
      if (category.length === 0) {

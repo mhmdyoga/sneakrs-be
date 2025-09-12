@@ -3,7 +3,7 @@ import prisma from '../config/database.js';
 import supabase from '../config/supabaseStorage.js'; // ini buat upload image karna butuh bucket dari supabase
 
 
-export const getProducts = async (req: express.Request, res: express.Response): Promise<void> => {
+export const getProducts = async (_req: express.Request, res: express.Response): Promise<void> => {
     try {
         const product = await prisma.product.findMany({
             select: {
