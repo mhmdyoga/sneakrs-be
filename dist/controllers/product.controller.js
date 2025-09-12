@@ -1,0 +1,226 @@
+import prisma from '../config/database.js';
+import supabase from '../config/supabaseStorage.js'; // ini buat upload image karna butuh bucket dari supabase
+export const getProducts = async (req, res) => {
+    try {
+        const product = await prisma.product.findMany({
+            select: {
+                id: true,
+                title: true,
+                price: true,
+                stock: true,
+                imageUrl: true,
+                category: true,
+                ownerName: true,
+            }
+        });
+        // check if porduct it doesn't find out;
+        if (product.length === 0) {
+            res.status(404).json({
+                message: "Failed to find products"
+            });
+        }
+        ;
+        // success 200
+        res.status(200).json({
+            product,
+            message: "Products Found Successfully"
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
+export const getProductById = async (req, res) => {
+    const { id } = req.body;
+    try {
+        const product = await prisma.product.findUnique({
+            where: {
+                id,
+            },
+            select: {
+                id: true,
+                title: true,
+                price: true,
+                stock: true,
+                imageUrl: true,
+                category: true,
+                ownerName: true,
+            }
+        });
+        if (!product) {
+            res.status(404).json({
+                message: "The Product doesn't exist"
+            });
+        }
+        ;
+        res.status(200).json({
+            product,
+            message: "The Product has been Found"
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
+export const getProductByName = async (req, res) => {
+    const { name } = req.params;
+    try {
+        const product = await prisma.product.findFirst({
+            where: {
+                title: name
+            },
+            select: {
+                id: true,
+                category: true,
+                imageUrl: true,
+                ownerName: true,
+                price: true,
+                stock: true,
+                title: true
+            }
+        });
+        if (!product) {
+            res.status(404).json({
+                message: "No Product founded by The Name"
+            });
+        }
+        ;
+        // success 
+        res.status(200).json({
+            product,
+            message: "Product Founded"
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+};
+export const createProduct = async (req, res) => {
+    const { title, price, stock, userId, categoryId } = req.body;
+    const file = req.file;
+    try {
+        if (!file) {
+            res.status(400).json({ message: "File is required" });
+            return;
+        }
+        const fileName = `products-${Date.now()}-${file.originalname}`;
+        // Upload ke Supabase Storage and create bucket on supabase with name product at storage (supabase)
+        const { error: uploadError } = await supabase.storage
+            .from("products")
+            .upload(fileName, file.buffer, {
+            contentType: file.mimetype ?? "application/octet-stream",
+            upsert: true,
+        });
+        if (uploadError)
+            throw uploadError;
+        // Ambil public URL
+        const { data: publicUrlData } = supabase.storage
+            .from("products")
+            .getPublicUrl(fileName);
+        const imageUrl = publicUrlData.publicUrl;
+        // Simpan ke DB lewat Prisma
+        const newProduct = await prisma.product.create({
+            data: {
+                title,
+                price: parseInt(price),
+                stock: parseInt(stock),
+                imageUrl,
+                user: {
+                    connect: { id: parseInt(userId) }, // pakai id bukan name
+                },
+                category: {
+                    connect: {
+                        id: parseInt(categoryId)
+                    }
+                },
+            },
+            include: {
+                user: { select: { id: true, name: true } },
+                category: { select: { category: true } },
+            },
+        });
+        res.status(201).json({
+            message: "Product created successfully",
+            product: newProduct,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+export const updateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { title, price } = req.body;
+    try {
+        const product = await prisma.product.update({
+            where: {
+                id,
+            },
+            data: {
+                title,
+                price
+            }
+        });
+        if (!product) {
+            res.status(400).json({
+                message: "Can't Update the product because id, it doesn't match with id product"
+            });
+        }
+        ;
+        res.status(200).json({
+            product,
+            message: "The Product has been Updated"
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal Server Error",
+            error: error.massage
+        });
+    }
+};
+export const deleteProduct = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await prisma.product.findUnique({
+            where: {
+                id
+            }
+        });
+        // check Product Exist by ID
+        if (!product) {
+            res.status(404).json({
+                message: "The Product Not Found"
+            });
+        }
+        // logic of deleting product
+        await prisma.product.delete({
+            where: {
+                id
+            }
+        });
+        // success deleting product
+        res.status(200).json({
+            message: "The Product has been deleted",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal Server Error",
+            err: error.message
+        });
+    }
+};
+//# sourceMappingURL=product.controller.js.map
