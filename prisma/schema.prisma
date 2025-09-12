@@ -21,8 +21,8 @@ model User {
 }
 
 model Product {
-  id          String        @id @unique @default(cuid())
-  title       String        @unique
+  id          String        @id @default(cuid())
+  title       String        
   imageUrl    String
   price       Int
   stock       Int
