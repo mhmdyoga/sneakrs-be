@@ -42,7 +42,7 @@ export const getProductById = async (req: express.Request, res: express.Response
     try {
         const product = await prisma.product.findUnique({
             where: {
-                id: id as string,
+                id: id as string | undefined,
             },
             select: {
                 id: true,
@@ -174,7 +174,7 @@ export const updateProduct = async (req: express.Request, res: express.Response)
   try {
     const product = await prisma.product.update({
       where: {
-        id: id as string,
+        id: id as string | undefined,
       },
       data: {
           title,
@@ -207,7 +207,7 @@ export const deleteProduct = async (req:express.Request, res: express.Response):
   try {
     const product = await prisma.product.findUnique({
       where: {
-        id: id as string
+        id: id as string | undefined,
       }
     });
 
@@ -221,7 +221,7 @@ export const deleteProduct = async (req:express.Request, res: express.Response):
     // logic of deleting product
     await prisma.product.delete({
       where: {
-        id
+        id: id as string | undefined,
       }
     });
 
