@@ -39,6 +39,10 @@ export const getProducts = async (_req: express.Request, res: express.Response):
 
 export const getProductById = async (req: express.Request, res: express.Response): Promise<void> => {
     const { id } = req.body;
+    if (!id) {
+      res.status(400).json({ error: "Product ID is required" });
+      return;
+    }
     try {
         const product = await prisma.product.findUnique({
             where: {
@@ -171,6 +175,11 @@ export const createProduct = async (req: express.Request, res: express.Response)
 export const updateProduct = async (req: express.Request, res: express.Response): Promise<void> => {
   const { id } = req.params;
   const { title, price } = req.body;
+
+  if (!id) {
+     res.status(400).json({ error: "Product ID is required" });
+     return;
+    }
   try {
     const product = await prisma.product.update({
       where: {
@@ -204,6 +213,10 @@ export const updateProduct = async (req: express.Request, res: express.Response)
 
 export const deleteProduct = async (req:express.Request, res: express.Response): Promise<void> => {
   const { id } = req.params;
+  if (!id) {
+       res.status(400).json({ error: "Product ID is required" });
+       return;
+    }
   try {
     const product = await prisma.product.findUnique({
       where: {
