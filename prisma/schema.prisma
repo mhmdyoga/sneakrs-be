@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id          Int            @id @default(autoincrement())
+  email       String         @unique
+  name        String?        @unique
+  password    String
+  role        String         @default("USER")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  product     Product[]
+  transaction Transactions[]
+}
+
+model Product {
+  id          String        @id @unique @default(cuid())
+  title       String        @unique
+  imageUrl    String
+  price       Int
+  stock       Int
+  ownerName   String
+  user        User          @relation(fields: [ownerName], references: [name])
+  transaction ProductItem[]
+  category    Category[]    @relation("CategoryToProduct")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  category String
+  product  Product[] @relation("CategoryToProduct")
+}
+
+model Transactions {
+  id           String        @id @unique
+  buyerName    String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime
+  gross_amount Int
+  status       String       @default("pending")
+  products     ProductItem[]
+  user         User          @relation(fields: [buyerName], references: [name])
+}
+
+model ProductItem {
+  id            String       @id @default(cuid())
+  size          Int
+  quantity      Int
+  productId     String
+  transactionId String
+  price         Int
+  product       Product      @relation(fields: [productId], references: [id])
+  transaction   Transactions @relation(fields: [transactionId], references: [id])
+}
+
+model Article {
+  id    String @id @default(uuid())
+  title String
+}
