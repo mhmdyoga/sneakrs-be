@@ -68,3 +68,6 @@ GET http://localhost:6542/api/v1/product/Jordan%201%20Low%20OG
 ###
 GET http://localhost:6542/api/v1/transactions
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ik11aGFtYWQgWW9nYSIsImVtYWlsIjoieW9nYWNhaGF5cUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1NzU5MjQ1MiwiZXhwIjoxNzU3NTk2MDUyfQ.aYrJn3TpuU5fLsqRWzBnModhPA1n2vB7gysl0cgBimg
+
+###
+GET http://localhost:6542/api/v1/product/new/arrvival

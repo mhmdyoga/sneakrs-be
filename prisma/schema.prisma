@@ -30,6 +30,7 @@ model Product {
   user        User          @relation(fields: [ownerName], references: [name])
   transaction ProductItem[]
   category    Category[]    @relation("CategoryToProduct")
+  createdAt   DateTime      @default(now())
 }
 
 model Category {

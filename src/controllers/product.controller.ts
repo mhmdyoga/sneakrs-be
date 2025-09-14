@@ -75,6 +75,41 @@ export const getProductById = async (req: express.Request, res: express.Response
     }
 };
 
+export const getProductLastMonth = async (_req: express.Request, res: express.Response): Promise<void> => {
+
+  const OnMonthAgo = new Date();
+  OnMonthAgo.setMonth(OnMonthAgo.getMonth() -1); // get date one month ago from today
+
+  try {
+  // find products created in the last month
+  const product = await prisma.product.findMany({
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 10, // limit to 10 products
+  });
+
+  // check if no products found
+  if (product.length === 0) {
+    res.status(404).json({
+      message: "No New Products Uploaded in The Last Month"
+    })
+  };
+
+  // success
+  res.status(200).json({
+    product,
+    message: "New Products Uploaded in The Last Month"
+  })
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal Server Error"
+    })
+  }
+}
+
 export const getProductByName = async (req: express.Request, res: express.Response): Promise<void> => {
   const { name }: any = req.params;
   try {
@@ -123,7 +158,7 @@ export const createProduct = async (req: express.Request, res: express.Response)
 
     const fileName = `products-${Date.now()}-${file.originalname}`;
 
-    // Upload ke Supabase Storage and create bucket on supabase with name product at storage (supabase)
+    // Upload ke Supabase Storage and create bucket on supabase with name 'product' at storage (supabase)
     const { error: uploadError } = await supabase.storage
       .from("products")
       .upload(fileName, file.buffer, {
@@ -138,6 +173,7 @@ export const createProduct = async (req: express.Request, res: express.Response)
       .from("products")
       .getPublicUrl(fileName);
 
+      // URL Image Product;
     const imageUrl = publicUrlData.publicUrl;
 
     // Simpan ke DB lewat Prisma
