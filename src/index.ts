@@ -32,17 +32,29 @@ const generalLimiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+// origin allowed
+const allowedOrigins = ["https://sneakersco.vercel.app", "http://localhost:3000"];
+
 // middleware
 app.use(cors({
-    origin: "https://sneakersco.vercel.app"
+    origin: (origin: any, callback: any) => {
+        if(!origin || allowedOrigins.includes(origin)){
+            callback(null, true)
+        }else {
+            callback(new Error("Blocked By Cors"))
+        }
+    },
+    credentials: true
 }));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ROUTES;
 app.use('/api/v1', generalLimiter, userRoutes);
 app.use('/api/v1', productRoutes);
-app.use('/api/v1', generalLimiter, categoryRoutes);
+app.use('/api/v1',  categoryRoutes);
 app.use('/api/v1/auth', AuthLimiter, authRoutes);
 app.use('/api/v1', generalLimiter, txRoutes);
 

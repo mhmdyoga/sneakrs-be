@@ -139,7 +139,6 @@ export const createTx = async (
       },
     });
 
-
     // orderParams;
     const OrderParams = {
       transaction_details: {
@@ -179,7 +178,7 @@ export const createTx = async (
     });
   } catch (error: unknown) {
     console.log((error as any).ApiResponse);
-    
+
     res.status(500).json({
       message: "Internal Server Error",
       error,
@@ -187,7 +186,10 @@ export const createTx = async (
   }
 };
 
-export const notification = async (req: express.Request, res: express.Response) => {
+export const notification = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     const notif = await (snap as any).transaction.notification(req.body);
 
@@ -218,16 +220,70 @@ export const notification = async (req: express.Request, res: express.Response) 
     await prisma.transactions.update({
       where: {
         id: orderId,
-      }, 
+      },
       data: {
         status: newStatus,
+      },
+      include: {
+        products: true
       }
     });
 
     res.status(200).json({ message: "notification received" });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
+};
+
+export const totalSales = async (
+  _req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const result = await prisma.transactions.aggregate({
+      _sum: {
+        gross_amount: true,
+      },
+    });
+
+    const total = result._sum.gross_amount || 0;
+
+    res.status(200).json({
+      message: "Total Sale all product",
+      totalSales: total,
+    });
+  } catch (error) {
+    console.error("Error calculating total sales:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const totalSalesByMonth = async (_req: express.Request, res: express.Response) => {
+  try {
+    const result = await prisma.transactions.groupBy({
+      by: ["createdAt"],
+      _sum: {
+        gross_amount: true
+      }
+    });
+
+    // ubah hasil biar jadi perbulan (YYYY-MM);
+    const salesMonth = result.reduce((acc: Record<string, number>, item: any) => {
+      const month = item.createdAt.toISOString().slice(0, 7);
+      acc[month] = (acc[month] || 0) + (item._sum.gross_amount || 0);
+      return acc
+    }, {})
+
+    res.status(200).json({
+      message: "Data Sales By Month",
+      totalSales: salesMonth
+    })
+  } catch (error) {
+    console.log(error);
+  }
 }
+
