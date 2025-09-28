@@ -202,7 +202,7 @@ export const notification = async (
     let newStatus = "PENDING";
 
     // handle notification status
-    if (transactionStatus === "capture" && fraudStatus === "accept") {
+    if (transactionStatus === "capture" && fraudStatus === "accept") { 
       newStatus = "SUCCESS";
     } else if (transactionStatus === "settlement") {
       newStatus = "SUCCESS";
@@ -217,7 +217,7 @@ export const notification = async (
     }
 
     // updated transaction status on db
-    await prisma.transactions.update({
+   const transactionItem = await prisma.transactions.update({
       where: {
         id: orderId,
       },
@@ -229,61 +229,27 @@ export const notification = async (
       }
     });
 
+    // conditional if newStatus = "SUCCESS" we should decrement the stock by quantity;
+    if (newStatus === "SUCCESS") {
+      for (const item of transactionItem.products) {
+         await prisma.product.update({
+          where: {
+            id: item.productId,
+            stock: {gte: item.quantity}
+          },
+          data: {
+            stock: {
+              decrement: item.quantity
+            }
+          }
+         })
+      }
+    }
+
     res.status(200).json({ message: "notification received" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };
-
-export const totalSales = async (
-  _req: express.Request,
-  res: express.Response
-) => {
-  try {
-    const result = await prisma.transactions.aggregate({
-      _sum: {
-        gross_amount: true,
-      },
-    });
-
-    const total = result._sum.gross_amount || 0;
-
-    res.status(200).json({
-      message: "Total Sale all product",
-      totalSales: total,
-    });
-  } catch (error) {
-    console.error("Error calculating total sales:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
-  }
-};
-
-export const totalSalesByMonth = async (_req: express.Request, res: express.Response) => {
-  try {
-    const result = await prisma.transactions.groupBy({
-      by: ["createdAt"],
-      _sum: {
-        gross_amount: true
-      }
-    });
-
-    // ubah hasil biar jadi perbulan (YYYY-MM);
-    const salesMonth = result.reduce((acc: Record<string, number>, item: any) => {
-      const month = item.createdAt.toISOString().slice(0, 7);
-      acc[month] = (acc[month] || 0) + (item._sum.gross_amount || 0);
-      return acc
-    }, {})
-
-    res.status(200).json({
-      message: "Data Sales By Month",
-      totalSales: salesMonth
-    })
-  } catch (error) {
-    console.log(error);
-  }
-}
 

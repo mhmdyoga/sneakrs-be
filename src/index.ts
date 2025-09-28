@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import productRoutes from "./routes/product.route.js";
-import categoryRoutes from './routes/category.route.js'
+import categoryRoutes from './routes/category.route.js';
+import salesRoutes from './routes/sales.routes.js'
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import txRoutes from './routes/tx.routes.js';
@@ -54,6 +55,7 @@ app.use(express.urlencoded({ extended: true }));
 // ROUTES;
 app.use('/api/v1', generalLimiter, userRoutes);
 app.use('/api/v1', productRoutes);
+app.use('/api/v1', salesRoutes)
 app.use('/api/v1',  categoryRoutes);
 app.use('/api/v1/auth', AuthLimiter, authRoutes);
 app.use('/api/v1', generalLimiter, txRoutes);
