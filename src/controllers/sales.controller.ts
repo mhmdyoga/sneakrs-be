@@ -7,10 +7,14 @@ export const totalSales = async (
   res: express.Response
 ) => {
   try {
+
     const result = await prisma.transactions.aggregate({
       _sum: {
         gross_amount: true,
       },
+      where: {
+        status: "SUCCESS"
+      }
     });
 
     const total = result._sum.gross_amount || 0;
@@ -42,6 +46,9 @@ export const totalSalesByMonth = async (_req: express.Request, res: express.Resp
     const result = await prisma.transactions.groupBy({
       by: ["createdAt"],
       _sum: { gross_amount: true },
+      where: {
+        status: "SUCCESS"
+      }
     });
 
     // record sales per bulan
