@@ -34,7 +34,7 @@ const generalLimiter = rateLimit({
 });
 
 // origin allowed
-const allowedOrigins = ["https://sneakersco.vercel.app", "http://localhost:3000"];
+const allowedOrigins = ["https://sneakersco.vercel.app", "https://dashboard-sneakersco.vercel.app"];
 
 // middleware
 app.use(cors({
