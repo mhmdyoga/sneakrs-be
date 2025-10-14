@@ -6,7 +6,7 @@ import productRoutes from "./routes/product.route.js";
 import categoryRoutes from './routes/category.route.js';
 import salesRoutes from './routes/sales.routes.js'
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
+import {rateLimit} from 'express-rate-limit';
 import txRoutes from './routes/tx.routes.js';
 
 
