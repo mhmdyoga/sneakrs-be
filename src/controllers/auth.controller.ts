@@ -41,7 +41,11 @@ export const RegisterUser = async (req: express.Request, res: express.Response):
                 name
             }
         });
-        res.status(201).json({ newUser, message: 'User registered successfully' });
+        res.status(201).json({ 
+            success: true,
+            newUser, 
+            message: 'User registered successfully'
+         });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -82,7 +86,12 @@ export const LoginUser = async(req: express.Request, res: express.Response): Pro
         res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', expires: new Date(Date.now() + 3600000), sameSite: 'strict' }); // 1 hour expiration 
 
         // if login is successful
-        res.status(200).json({ token, message: 'User logged in successfully' });
+        res.status(200).json({ 
+            success: true,
+            user,
+            token, 
+            message: 'User logged in successfully' 
+        });
         
     } catch (error) {
         console.log(error);

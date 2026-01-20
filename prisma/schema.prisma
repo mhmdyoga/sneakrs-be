@@ -64,4 +64,4 @@ model ProductItem {
 model Article {
   id    String @id @default(uuid())
   title String
-}
+} 
