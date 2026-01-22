@@ -104,7 +104,7 @@ export const getProductLastMonth = async (
 
   try {
     // find products created in the last month
-    const product = await prisma.product.findMany({
+    const products = await prisma.product.findMany({
       orderBy: {
         createdAt: "desc",
       },
@@ -112,7 +112,7 @@ export const getProductLastMonth = async (
     });
 
     // check if no products found
-    if (product.length === 0) {
+    if (products.length === 0) {
       res.status(404).json({
         message: "No New Products Uploaded in The Last Month",
       });
@@ -120,7 +120,7 @@ export const getProductLastMonth = async (
 
     // success
     res.status(200).json({
-      product,
+      products,
       message: "New Products Uploaded in The Last Month",
     });
   } catch (error) {
