@@ -172,7 +172,7 @@ export const createTx = async (
     // success checkout
     res.status(201).json({
       transaction: tx,
-      paymentToken: MidtransTX.token,
+      token: MidtransTX.token,
       redirectUrl: MidtransTX.redirect_url,
       message: "Checkout successfully created",
     });
